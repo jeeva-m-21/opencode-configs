@@ -14,19 +14,15 @@
   //     "anthropic": { "options": { "timeout": 600000, "chunkTimeout": 30000, "setCacheKey": true } }
   //   },
 
-  // Context loading: the Context Compiler (context-compiler tool + state/knowledge-registry.json)
-  // deterministically resolves only the knowledge needed for each task. These instruction files
-  // form the stable prefix that is always available. As the compiler matures through Phase 1-5,
-  // the platform specification will be moved from always-loaded to compiler-resolved.
+  // Context loading: the Context Compiler scans atom files at runtime (no static registry needed).
+  // Instructions form the stable prefix always available to agents.
+  // Platform spec kept for human reference; compiler selects relevant atoms per-task.
   "instructions": [
     "AGENTS.md",
     "docs/engineering-handbook.md",
-    "docs/platform-specification.md",
-    "state/decisions.md",
     "state/phase.json",
     "state/analysis.json",
-    "state/cache/repo-structure.json",
-    "state/knowledge-registry.json"
+    "state/cache/repo-structure.json"
   ],
 
   "compaction": {
