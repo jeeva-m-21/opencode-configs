@@ -1,7 +1,6 @@
 ---
 description: Code implementation agent — consumes execution contracts, never re-explores or re-analyzes
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 color: "#ed4245"
 ---

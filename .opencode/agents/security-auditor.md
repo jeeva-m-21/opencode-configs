@@ -1,7 +1,6 @@
 ---
 description: Security auditing agent that scans code for vulnerabilities and best practices
 mode: subagent
-model: anthropic/claude-haiku-4-20250514
 temperature: 0.1
 color: "#9b59b6"
 ---

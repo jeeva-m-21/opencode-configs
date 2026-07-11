@@ -2,18 +2,17 @@
   "$schema": "https://opencode.ai/config.json",
 
   "default_agent": "orchestrator",
-  "model": "anthropic/claude-sonnet-4-20250514",
-  "small_model": "anthropic/claude-haiku-4-20250514",
 
-  "provider": {
-    "anthropic": {
-      "options": {
-        "timeout": 600000,
-        "chunkTimeout": 30000,
-        "setCacheKey": true
-      }
-    }
-  },
+  // Model is unset — uses whatever provider/model you configured via /connect or environment.
+  // To set specific models for tiered routing (premium for orchestrator/builder, cheap for analyst/reviewer):
+  //   "model": "anthropic/claude-sonnet-4-20250514",
+  //   "small_model": "anthropic/claude-haiku-4-20250514",
+  // Or by environment variable: "{env:OPENCODE_MODEL}"
+  //
+  // Provider options (timeouts, caching) — add your provider config here:
+  //   "provider": {
+  //     "anthropic": { "options": { "timeout": 600000, "chunkTimeout": 30000, "setCacheKey": true } }
+  //   },
 
   "instructions": [
     "AGENTS.md",
@@ -135,7 +134,6 @@
     "orchestrator": {
       "mode": "primary",
       "temperature": 0.2,
-      "model": "anthropic/claude-sonnet-4-20250514",
       "color": "#5865f2",
       "permission": {
         "edit": "ask",
@@ -170,7 +168,7 @@
     "analyst": {
       "mode": "subagent",
       "temperature": 0.1,
-      "model": "anthropic/claude-haiku-4-20250514",
+      // "model": "anthropic/claude-haiku-4-20250514",  // uncomment for tiered routing
       "color": "#57f287",
       "permission": {
         "edit": "deny",
@@ -198,7 +196,7 @@
     "builder": {
       "mode": "subagent",
       "temperature": 0.2,
-      "model": "anthropic/claude-sonnet-4-20250514",
+      // "model": "anthropic/claude-sonnet-4-20250514",  // uncomment for tiered routing
       "color": "#ed4245",
       "permission": {
         "edit": "allow",
@@ -233,7 +231,7 @@
     "reviewer": {
       "mode": "subagent",
       "temperature": 0.1,
-      "model": "anthropic/claude-haiku-4-20250514",
+      // "model": "anthropic/claude-haiku-4-20250514",  // uncomment for tiered routing
       "color": "#fee75c",
       "permission": {
         "edit": "deny",
@@ -265,7 +263,7 @@
     "docs-writer": {
       "mode": "subagent",
       "temperature": 0.2,
-      "model": "anthropic/claude-haiku-4-20250514",
+      // "model": "anthropic/claude-haiku-4-20250514",  // uncomment for tiered routing
       "color": "#eb459e",
       "permission": {
         "edit": "allow",
@@ -291,7 +289,7 @@
     "security-auditor": {
       "mode": "subagent",
       "temperature": 0.1,
-      "model": "anthropic/claude-haiku-4-20250514",
+      // "model": "anthropic/claude-haiku-4-20250514",  // uncomment for tiered routing
       "color": "#9b59b6",
       "permission": {
         "edit": "deny",
@@ -320,7 +318,7 @@
     "plan": {
       "mode": "primary",
       "temperature": 0.1,
-      "model": "anthropic/claude-haiku-4-20250514",
+      // "model": "anthropic/claude-haiku-4-20250514",  // uncomment for tiered routing
       "permission": {
         "edit": "deny",
         "bash": {

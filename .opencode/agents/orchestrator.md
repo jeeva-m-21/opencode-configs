@@ -1,7 +1,6 @@
 ---
 description: Primary engineering orchestrator that classifies requests, produces execution contracts, dispatches subagents, and validates against contracts
 mode: primary
-model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 color: "#5865f2"
 ---

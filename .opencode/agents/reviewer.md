@@ -1,7 +1,6 @@
 ---
 description: Code review agent — validates implementation against the execution contract, not against personal preference
 mode: subagent
-model: anthropic/claude-haiku-4-20250514
 temperature: 0.1
 color: "#fee75c"
 ---

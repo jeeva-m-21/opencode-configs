@@ -1,7 +1,6 @@
 ---
 description: Read-only codebase exploration agent for searching, reading, and summarizing code with minimal context overhead
 mode: subagent
-model: anthropic/claude-haiku-4-20250514
 temperature: 0.1
 color: "#57f287"
 ---

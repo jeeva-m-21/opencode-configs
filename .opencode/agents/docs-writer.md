@@ -1,7 +1,6 @@
 ---
 description: Documentation agent for writing and maintaining project documentation
 mode: subagent
-model: anthropic/claude-haiku-4-20250514
 temperature: 0.2
 color: "#eb459e"
 ---
