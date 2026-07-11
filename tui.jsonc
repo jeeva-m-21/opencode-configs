@@ -1,0 +1,27 @@
+{
+  "$schema": "https://opencode.ai/tui.json",
+  "theme": "opencode",
+  "leader_timeout": 2000,
+  "keybinds": {
+    "leader": "ctrl+x",
+    "command_list": "ctrl+p",
+    "new_session": "ctrl+x n",
+    "next_session": "ctrl+x l",
+    "undo": "ctrl+x u",
+    "redo": "ctrl+x r",
+    "toggle_details": "ctrl+x d",
+    "toggle_agent": "tab"
+  },
+  "scroll_speed": 3,
+  "scroll_acceleration": {
+    "enabled": false
+  },
+  "diff_style": "auto",
+  "mouse": true,
+  "attention": {
+    "enabled": false,
+    "notifications": true,
+    "sound": true,
+    "volume": 0.4
+  }
+}

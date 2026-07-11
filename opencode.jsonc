@@ -1,0 +1,349 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "default_agent": "orchestrator",
+  "model": "anthropic/claude-sonnet-4-20250514",
+  "small_model": "anthropic/claude-haiku-4-20250514",
+
+  "provider": {
+    "anthropic": {
+      "options": {
+        "timeout": 600000,
+        "chunkTimeout": 30000,
+        "setCacheKey": true
+      }
+    }
+  },
+
+  "instructions": [
+    "AGENTS.md",
+    "docs/engineering-handbook.md",
+    "docs/platform-specification.md",
+    "state/decisions.md",
+    "state/phase.json",
+    "state/analysis.json",
+    "state/cache/repo-structure.json"
+  ],
+
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "reserved": 10000
+  },
+
+  "share": "manual",
+
+  "snapshot": true,
+
+  "permission": {
+    "external_directory": {
+      "~/projects/**": "allow"
+    },
+
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow"
+    },
+
+    "edit": {
+      "*": "ask"
+    },
+
+    "bash": {
+      "*": "ask",
+      "git status *": "allow",
+      "git diff *": "allow",
+      "git log *": "allow",
+      "git branch *": "allow",
+      "git stash *": "allow",
+      "git add *": "ask",
+      "git commit *": "ask",
+      "git push *": "ask",
+      "ls *": "allow",
+      "cat *": "allow",
+      "head *": "allow",
+      "tail *": "allow",
+      "wc *": "allow",
+      "find *": "allow",
+      "which *": "allow",
+      "echo *": "allow",
+      "pwd *": "allow",
+      "whoami *": "allow",
+      "node -v *": "allow",
+      "npm -v *": "allow",
+      "bun -v *": "allow",
+      "python --version *": "allow",
+      "npm run lint *": "allow",
+      "npm run typecheck *": "allow",
+      "npm test *": "allow",
+      "bun run lint *": "allow",
+      "bun run typecheck *": "allow",
+      "bun test *": "allow",
+      "pnpm run lint *": "allow",
+      "pnpm run typecheck *": "allow",
+      "pnpm test *": "allow",
+      "rm *": "deny",
+      "rm -rf *": "deny",
+      "rm -r *": "deny",
+      "rmdir *": "deny",
+      "curl * | sh": "deny",
+      "curl * | bash": "deny",
+      "wget * -O - * | sh": "deny",
+      "sudo *": "deny",
+      "chmod 777 *": "deny"
+    },
+
+    "webfetch": "allow",
+    "websearch": "allow",
+
+    "task": {
+      "*": "allow",
+      "analyst": "allow",
+      "builder": "allow",
+      "reviewer": "allow",
+      "docs-writer": "allow",
+      "security-auditor": "allow"
+    },
+
+    "skill": {
+      "*": "allow"
+    },
+
+    "todowrite": "allow",
+
+    "question": "allow"
+  },
+
+  "mcp": {
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true,
+      "headers": {
+        "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
+      }
+    }
+  },
+
+  "tools": {
+    "context7_*": false
+  },
+
+  "agent": {
+    "orchestrator": {
+      "mode": "primary",
+      "temperature": 0.2,
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "color": "#5865f2",
+      "permission": {
+        "edit": "ask",
+        "bash": {
+          "*": "ask",
+          "git *": "allow",
+          "npm *": "allow",
+          "bun *": "allow",
+          "pnpm *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "grep *": "allow",
+          "find *": "allow",
+          "wc *": "allow",
+          "echo *": "allow"
+        },
+        "task": {
+          "*": "allow",
+          "analyst": "allow",
+          "builder": "allow",
+          "reviewer": "allow",
+          "docs-writer": "allow",
+          "security-auditor": "allow"
+        }
+      },
+      "tools": {
+        "context7_*": true,
+        "skill": true
+      }
+    },
+
+    "analyst": {
+      "mode": "subagent",
+      "temperature": 0.1,
+      "model": "anthropic/claude-haiku-4-20250514",
+      "color": "#57f287",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "ask",
+          "git *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "grep *": "allow",
+          "find *": "allow",
+          "wc *": "allow",
+          "echo *": "allow"
+        },
+        "task": {
+          "*": "deny"
+        }
+      },
+      "tools": {
+        "context7_*": true,
+        "skill": false,
+        "todowrite": false
+      }
+    },
+
+    "builder": {
+      "mode": "subagent",
+      "temperature": 0.2,
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "color": "#ed4245",
+      "permission": {
+        "edit": "allow",
+        "bash": {
+          "*": "ask",
+          "git *": "allow",
+          "npm *": "allow",
+          "bun *": "allow",
+          "pnpm *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "grep *": "allow",
+          "find *": "allow",
+          "wc *": "allow",
+          "echo *": "allow",
+          "rm *": "deny",
+          "rm -rf *": "deny",
+          "sudo *": "deny",
+          "curl * | sh": "deny"
+        },
+        "task": {
+          "*": "deny"
+        }
+      },
+      "tools": {
+        "context7_*": false,
+        "skill": true,
+        "todowrite": true
+      }
+    },
+
+    "reviewer": {
+      "mode": "subagent",
+      "temperature": 0.1,
+      "model": "anthropic/claude-haiku-4-20250514",
+      "color": "#fee75c",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "ask",
+          "git diff *": "allow",
+          "git log *": "allow",
+          "git show *": "allow",
+          "git status *": "allow",
+          "npm run lint *": "allow",
+          "npm run typecheck *": "allow",
+          "bun run lint *": "allow",
+          "bun run typecheck *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "grep *": "allow"
+        },
+        "task": {
+          "*": "deny"
+        }
+      },
+      "tools": {
+        "context7_*": false,
+        "skill": true,
+        "todowrite": false
+      }
+    },
+
+    "docs-writer": {
+      "mode": "subagent",
+      "temperature": 0.2,
+      "model": "anthropic/claude-haiku-4-20250514",
+      "color": "#eb459e",
+      "permission": {
+        "edit": "allow",
+        "bash": {
+          "*": "deny",
+          "git status *": "allow",
+          "git diff *": "allow",
+          "git log *": "allow",
+          "ls *": "allow",
+          "cat *": "allow"
+        },
+        "task": {
+          "*": "deny"
+        }
+      },
+      "tools": {
+        "context7_*": true,
+        "skill": true,
+        "todowrite": false
+      }
+    },
+
+    "security-auditor": {
+      "mode": "subagent",
+      "temperature": 0.1,
+      "model": "anthropic/claude-haiku-4-20250514",
+      "color": "#9b59b6",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "ask",
+          "npm audit *": "allow",
+          "bun pm audit *": "allow",
+          "git log *": "allow",
+          "git diff *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "grep *": "allow"
+        },
+        "webfetch": "allow",
+        "task": {
+          "*": "deny"
+        }
+      },
+      "tools": {
+        "context7_*": true,
+        "skill": true,
+        "todowrite": false
+      }
+    },
+
+    "plan": {
+      "mode": "primary",
+      "temperature": 0.1,
+      "model": "anthropic/claude-haiku-4-20250514",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "deny",
+          "git *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "grep *": "allow",
+          "find *": "allow",
+          "wc *": "allow"
+        },
+        "task": {
+          "*": "deny",
+          "analyst": "allow"
+        }
+      }
+    }
+  },
+
+  "server": {
+    "port": 4096,
+    "hostname": "127.0.0.1"
+  },
+
+  "experimental": {}
+}

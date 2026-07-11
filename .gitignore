@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+bun.lockb
+bun.lock
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+build/
+.next/
+.turbo/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# OpenCode runtime (not config)
+.cache/
