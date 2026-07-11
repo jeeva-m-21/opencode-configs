@@ -22,6 +22,20 @@ related_to: [DEC-DB-NAMING-001]
 priority: required
 token_estimate: 100
 audience: [builder]
+intent: do
+applies_to: routes layer code
+tradeoffs:
+  -       pro: "Consistent structure across the codebase",       con: "May feel verbose for simple cases"
+canonical_reference:
+  file: src/api/routes/users.ts
+  imports: 1-9
+  structure: 10-48
+  handler: 50-65
+primary_binding:
+  layer: route
+verification:
+  test_file: src/api/__tests__/routes/users.test.ts
+  test_pattern: should return expected output when given valid input
 platform_version: 1.0.0
 ---
 

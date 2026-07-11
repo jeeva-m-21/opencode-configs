@@ -23,6 +23,9 @@ evidence: [OWASP rate limiting recommendations]
 priority: recommended
 token_estimate: 40
 audience: [builder, security-auditor, orchestrator]
+alternatives:
+  -       option: "See body",       why_rejected: "See body"
+rationale: Rate Limiting Strategy   Decision
 platform_version: 1.0.0
 ---
 

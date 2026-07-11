@@ -23,6 +23,9 @@ evidence: []
 priority: required
 token_estimate: 40
 audience: [builder, reviewer, orchestrator]
+alternatives:
+  -       option: "See body",       why_rejected: "See body"
+rationale: Database Naming Conventions   Decision
 platform_version: 1.0.0
 ---
 

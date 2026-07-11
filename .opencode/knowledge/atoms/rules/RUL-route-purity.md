@@ -22,6 +22,9 @@ related_to: [DEC-LAYERED-001]
 priority: required
 token_estimate: 40
 audience: [builder, reviewer, orchestrator]
+enforcement: reviewer
+violation_severity: blocking
+scope: always
 platform_version: 1.0.0
 ---
 

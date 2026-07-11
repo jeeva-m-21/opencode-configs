@@ -21,6 +21,9 @@ conflicts_with: []
 priority: required
 token_estimate: 28
 audience: [builder, reviewer, orchestrator]
+enforcement: reviewer
+violation_severity: blocking
+scope: always
 platform_version: 1.0.0
 ---
 

@@ -26,6 +26,9 @@ evidence:
 priority: required
 token_estimate: 85
 audience: [builder, reviewer, security-auditor, orchestrator]
+alternatives:
+  -       option: "See body",       why_rejected: "See body"
+rationale: JWT Access Tokens with Rotating Refresh Tokens   Decision
 platform_version: 1.0.0
 ---
 
