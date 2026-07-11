@@ -349,12 +349,7 @@
         "context7_*": false,
         "sequential-thinking_*": true,
         "git_*": true,
-        "github_*": true,
         "postgres_*": true,
-        "sqlite_*": true,
-        "redis_*": true,
-        "docker_*": true,
-        "brave-search_*": true,
         "skill": true,
         "todowrite": true
       }
