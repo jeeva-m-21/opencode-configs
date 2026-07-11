@@ -12,8 +12,9 @@ The complete platform specification is at `docs/platform-specification.md`. This
 | **Context Compiler** | `docs/context-compiler-architecture.md` | Deterministic context optimization — resolves minimal knowledge for each task, maximizes prompt caching |
 | **Knowledge Graph** | `docs/knowledge-graph-architecture.md` | Atom-centric knowledge system — decisions, patterns, constraints, strategies as composable graph nodes |
 | **Reflection Engine** | `docs/reflection-engine-architecture.md` | Continuous learning system — observes every execution, accumulates evidence, proposes improvements |
+| **Implementation Runtime** | `docs/implementation-runtime.md` | Deterministic code generation — resolves every engineering decision before the Builder runs, produces Implementation IR, the Builder behaves as a compiler backend |
 
-These four components form the core infrastructure. The Ontology defines WHAT knowledge types exist. The Knowledge Graph stores them as atoms. The Context Compiler determines which atoms reach models. The Reflection Engine learns from every execution and proposes improvements.
+These five components form the core infrastructure. The Ontology defines WHAT knowledge types exist. The Knowledge Graph stores them as atoms. The Context Compiler determines which atoms reach models. The Implementation Runtime pre-resolves every engineering decision into the IIR. The Reflection Engine learns from every execution and proposes improvements.
 
 ## Our Platform
 
