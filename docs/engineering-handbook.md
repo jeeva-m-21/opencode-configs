@@ -8,11 +8,12 @@ The complete platform specification is at `docs/platform-specification.md`. This
 
 | Component | Document | Description |
 |---|---|---|
+| **Engineering Ontology** | `docs/engineering-ontology.md` | Definitive 10-type knowledge taxonomy. The schema for ALL atoms — what each type answers, how it behaves, how the compiler treats it. Read this before creating any atom. |
 | **Context Compiler** | `docs/context-compiler-architecture.md` | Deterministic context optimization — resolves minimal knowledge for each task, maximizes prompt caching |
-| **Knowledge Graph** | `docs/knowledge-graph-architecture.md` | Atom-centric knowledge system — decisions, patterns, rules, capabilities as composable graph nodes |
+| **Knowledge Graph** | `docs/knowledge-graph-architecture.md` | Atom-centric knowledge system — decisions, patterns, constraints, strategies as composable graph nodes |
 | **Reflection Engine** | `docs/reflection-engine-architecture.md` | Continuous learning system — observes every execution, accumulates evidence, proposes improvements |
 
-These three components form the core infrastructure. The Context Compiler determines what knowledge reaches models. The Knowledge Graph stores it as atoms. The Reflection Engine learns from every execution and proposes evidence-backed improvements.
+These four components form the core infrastructure. The Ontology defines WHAT knowledge types exist. The Knowledge Graph stores them as atoms. The Context Compiler determines which atoms reach models. The Reflection Engine learns from every execution and proposes improvements.
 
 ## Our Platform
 

@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opencode.ai/knowledge/atom-schema-v2.json",
+  "title": "Engineering Knowledge Atom v2",
+  "description": "Schema for all ten knowledge atom types defined by the Engineering Knowledge Ontology v2.0. One atom = one unit of knowledge = one question answered.",
+  "definitions": {
+    "baseAtom": {
+      "type": "object",
+      "required": ["id", "type", "title", "description", "capabilities", "status", "version", "created", "priority", "token_estimate", "audience"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(CON|DEC|GUI|STR|PAT|PRO|CHK|EXM|CAP|MET)-[a-z0-9-]+$",
+          "description": "Format: {TYPE_CODE}-{slug}"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["constraint", "decision", "guidance", "strategy", "pattern", "procedure", "checklist", "example", "capability", "metric"]
+        },
+        "title": { "type": "string", "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 500 },
+        "capabilities": { "type": "array", "items": { "type": "string" } },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "domain": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "proposed", "accepted", "active", "superseded", "deprecated", "rejected"]
+        },
+        "version": { "type": "string", "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$" },
+        "created": { "type": "string", "format": "date" },
+        "updated": { "type": "string", "format": "date" },
+        "author": { "type": "string" },
+        "reviewers": { "type": "array", "items": { "type": "string" } },
+        "dependencies": {
+          "type": "object",
+          "properties": {
+            "requires": { "type": "array", "items": { "type": "string" } },
+            "optional": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "relationships": {
+          "type": "object",
+          "properties": {
+            "supersedes": { "type": "array", "items": { "type": "string" } },
+            "superseded_by": { "type": ["string", "null"] },
+            "extends": { "type": "array", "items": { "type": "string" } },
+            "implements": { "type": "array", "items": { "type": "string" } },
+            "exemplifies": { "type": "array", "items": { "type": "string" } },
+            "validates": { "type": "array", "items": { "type": "string" } },
+            "conforms_to": { "type": "array", "items": { "type": "string" } },
+            "guides": { "type": "array", "items": { "type": "string" } },
+            "conflicts_with": { "type": "array", "items": { "type": "string" } },
+            "related_to": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "priority": { "type": "string", "enum": ["required", "recommended", "contextual"] },
+        "token_estimate": { "type": "integer", "minimum": 1, "maximum": 5000 },
+        "audience": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["builder", "reviewer", "analyst", "docs-writer", "security-auditor", "orchestrator"] },
+          "minItems": 1
+        },
+        "platform_version": { "type": "string" },
+        "deprecated_in_favor_of": { "type": ["string", "null"] },
+        "removal_date": { "type": ["string", "null"], "format": "date" }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "title": "Constraint (CON)",
+      "allOf": [
+        { "$ref": "#/definitions/baseAtom" },
+        { "properties": { "type": { "const": "constraint" } } },
+        {
+          "required": ["enforcement", "violation_severity", "scope"],
+          "properties": {
+            "enforcement": { "type": "string", "enum": ["reviewer", "system", "ci"] },
+            "violation_severity": { "type": "string", "enum": ["blocking", "warning"] },
+            "scope": { "type": "string", "enum": ["always", "conditional"] },
+            "condition": { "type": ["string", "null"] }
+          }
+        }
+      ]
+    },
+    {
+      "title": "Decision (DEC)",
+      "allOf": [
+        { "$ref": "#/definitions/baseAtom" },
+        { "properties": { "type": { "const": "decision" } } },
+        {
+          "required": ["confidence", "evidence", "alternatives", "rationale"],
+          "properties": {
+            "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+            "evidence": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "alternatives": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["option", "why_rejected"],
+                "properties": {
+                  "option": { "type": "string" },
+                  "why_rejected": { "type": "string" }
+                }
+              },
+              "minItems": 1
+            },
+            "rationale": { "type": "string", "minLength": 20 }
+          }
+        }
+      ]
+    },
+    {
+      "title": "Guidance (GUI)",
+      "allOf": [
+        { "$ref": "#/definitions/baseAtom" },
+        { "properties": { "type": { "const": "guidance" } } },
+        {
+          "required": ["strength", "applies_when", "exceptions"],
+          "properties": {
+            "strength": { "type": "string", "enum": ["strongly_prefer", "prefer", "consider"] },
+            "applies_when": { "type": "string" },
+            "exceptions": { "type": "string" }
+          }
+        }
+      ]
+    },
+    {
+      "title": "Strategy (STR)",
+      "allOf": [
+        { "$ref": "#/definitions/baseAtom" },
+        { "properties": { "type": { "const": "strategy" } } },
+        {
+          "required": ["applies_when", "cognitive_steps"],
+          "properties": {
+            "applies_when": { "type": "string" },
+            "cognitive_steps": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["step", "purpose"],
+                "properties": {
+                  "step": { "type": "string" },
+                  "purpose": { "type": "string" }
+                }
+              },
+              "minItems": 2
+            }
+          }
+        }
+      ]
+    },
+    {
+      "title": "Pattern (PAT)",
+      "allOf": [
+        { "$ref": "#/definitions/baseAtom" },
+        { "properties": { "type": { "const": "pattern" } } },
+        {
+          "required": ["intent", "applies_to", "tradeoffs"],
+          "properties": {
+            "intent": { "type": "string", "enum": ["do", "avoid"] },
+            "applies_to": { "type": "string" },
+            "tradeoffs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["pro", "con"],
+                "properties": {
+                  "pro": { "type": "string" },
+                  "con": { "type": "string" }
+                }
+              },
+              "minItems": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "title": "Procedure (PRO)",
+      "allOf": [
+        { "$ref": "#/definitions/baseAtom" },
+        { "properties": { "type": { "const": "procedure" } } },
+        {
+          "required": ["trigger", "steps", "checkpoints", "rollback"],
+          "properties": {
+            "trigger": { "type": "string" },
+            "steps": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["order", "action", "verification"],
+                "properties": {
+                  "order": { "type": "integer" },
+                  "action": { "type": "string" },
+                  "verification": { "type": "string" }
+                }
+              },
+              "minItems": 1
+            },
+            "checkpoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["after_step", "criteria"],
+                "properties": {
+                  "after_step": { "type": "integer" },
+                  "criteria": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            },
+            "rollback": { "type": "string", "minLength": 10 },
+            "branching": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "condition": { "type": "string" },
+                  "goto_step": { "type": "integer" }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "title": "Checklist (CHK)",
+      "allOf": [
+        { "$ref": "#/definitions/baseAtom" },
+        { "properties": { "type": { "const": "checklist" } } },
+        {
+          "required": ["trigger", "items"],
+          "properties": {
+            "trigger": { "type": "string" },
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["description", "severity", "verification"],
+                "properties": {
+                  "description": { "type": "string" },
+                  "severity": { "type": "string", "enum": ["blocking", "advisory"] },
+                  "verification": { "type": "string" }
+                }
+              },
+              "minItems": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "title": "Example (EXM)",
+      "allOf": [
+        { "$ref": "#/definitions/baseAtom" },
+        { "properties": { "type": { "const": "example" } } },
+        {
+          "required": ["references", "language"],
+          "properties": {
+            "references": { "type": "string" },
+            "language": { "type": "string" },
+            "framework": { "type": "string" }
+          }
+        }
+      ]
+    },
+    {
+      "title": "Capability (CAP)",
+      "allOf": [
+        { "$ref": "#/definitions/baseAtom" },
+        { "properties": { "type": { "const": "capability" } } },
+        {
+          "required": ["parent", "required_by"],
+          "properties": {
+            "parent": { "type": ["string", "null"] },
+            "subcapabilities": { "type": "array", "items": { "type": "string" } },
+            "required_by": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      ]
+    },
+    {
+      "title": "Metric (MET)",
+      "allOf": [
+        { "$ref": "#/definitions/baseAtom" },
+        { "properties": { "type": { "const": "metric" } } },
+        {
+          "required": ["unit", "thresholds", "measured_by", "direction"],
+          "properties": {
+            "unit": { "type": "string" },
+            "thresholds": {
+              "type": "object",
+              "required": ["warning", "failure"],
+              "properties": {
+                "warning": { "type": "number" },
+                "failure": { "type": "number" }
+              }
+            },
+            "measured_by": { "type": "string" },
+            "direction": { "type": "string", "enum": ["higher_is_better", "lower_is_better"] }
+          }
+        }
+      ]
+    }
+  ]
+}
