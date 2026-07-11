@@ -1,8 +1,8 @@
 # OpenCode Engineering Framework
 
-A reusable, opinionated engineering platform for AI-first full-stack projects. Drop these files into any project to get a complete agent hierarchy, workflow pipeline, knowledge system, execution contract system, and platform standards — all powered by OpenCode.
+A reusable, opinionated engineering platform for AI-first full-stack projects. Drop these files into any project to get a complete agent hierarchy, workflow pipeline, knowledge system, execution contract system, MCP integration, and platform standards — all powered by OpenCode.
 
-## Quick Start (Use in Any Project)
+## Quick Start
 
 ```bash
 # Clone the framework configs into your project
@@ -28,11 +28,39 @@ opencode
 | Component | Count | Description |
 |---|---|---|
 | **Agents** | 6 | Orchestrator, Analyst, Builder, Reviewer, Docs-writer, Security-auditor |
-| **Commands** | 9 | `/analyze`, `/plan-feature`, `/build-feature`, `/review-feature`, `/test-feature`, `/commit-feature`, `/fix-bug`, `/generate-context`, `/release` |
-| **Skills** | 25 | 19 knowledge modules (`eng-*`) + 6 workflow skills |
-| **Tools** | 3 | `state-reader`, `repo-analyzer`, `env-validator` |
+| **Commands** | 10 | `/analyze`, `/plan-feature`, `/build-feature`, `/review-feature`, `/test-feature`, `/commit-feature`, `/fix-bug`, `/generate-context`, `/compile-context`, `/release` |
+| **Skills** | 27 | 19 knowledge modules (`eng-*`) + 6 workflow skills + 2 infrastructure skills |
+| **Tools** | 4 | `state-reader`, `repo-analyzer`, `env-validator`, `context-compiler` |
 | **Plugins** | 3 | `state-manager`, `policy-enforcer`, `context-optimizer` |
-| **Standards docs** | 2 | Platform Specification + Engineering Handbook (always loaded in agent context) |
+| **MCP Servers** | 14 | `context7`, `sequential-thinking`, `memory`, `fetch`, `github`, `git`, `brave-search`, `postgres`, `sqlite`, `docker`, `redis`, `sentry`, `playwright`, `puppeteer` |
+
+## Core Infrastructure
+
+The framework has three infrastructure components that work together:
+
+| Component | Document | Role |
+|---|---|---|
+| **Context Compiler** | `docs/context-compiler-architecture.md` | Deterministic context optimization — resolves minimal knowledge, maximizes prompt caching, token budgets |
+| **Knowledge Graph** | `docs/knowledge-graph-architecture.md` | Atom-centric knowledge — decisions, patterns, rules as composable graph nodes (not documents) |
+| **Reflection Engine** | `docs/reflection-engine-architecture.md` | Continuous learning — observes every execution, accumulates evidence, proposes improvements |
+
+```
+User Request → Orchestrator → Context Compiler → Knowledge Graph Atoms → Model
+                                    ↑                      ↑
+                                    │                      │
+                                    └──── Reflection Engine (feedback loop)
+```
+
+## MCP Server Architecture
+
+14 MCP servers configured with tiered access — globally disabled, per-agent opt-in to prevent token bloat:
+
+| Tier | Servers | Agents |
+|---|---|---|
+| **0 — Always** | `context7` | orchestrator, analyst, docs-writer, security-auditor |
+| **1 — Specialized** | `sequential-thinking`, `memory`, `fetch` | orchestrator (all), analyst (fetch), builder (seq-thinking), security-auditor (seq-thinking, fetch) |
+| **2 — On-demand** | `github`, `git`, `brave-search`, `postgres`, `sqlite`, `docker`, `redis`, `sentry`, `playwright`, `puppeteer` | builder (github, git, postgres, sqlite, redis, docker, brave-search), reviewer (git), security-auditor (github, brave-search) |
+| **3 — Restricted** | `filesystem` | None (built-in tools already cover this) |
 
 ## How It Works
 
@@ -48,13 +76,15 @@ Orchestrator → classifies as "feature" → loads workflow-selector skill
   ▼
 state/contract.md ← THE single source of truth
   │
-  ├──► /build-feature → Builder consumes contract (no re-exploration)
+  ├──► Context Compiler resolves minimal knowledge atoms
+  ├──► /build-feature → Builder receives compiled context (no re-exploration)
   ├──► /review-feature → Reviewer validates against contract
   ├──► /test-feature → Builder verifies acceptance criteria
-  └──► /commit-feature → Builder commits with contract reference
+  ├──► /commit-feature → Builder commits with contract reference
+  └──► Reflection Engine records structured observations for future improvement
 ```
 
-## Platform Standards (Always Enforced)
+## Platform Standards
 
 - **Stack:** TypeScript strict / Bun / React 18+ / Hono or Express / PostgreSQL 16+ / Drizzle ORM / Redis / Zod / JWT / Vitest / Docker / GitHub Actions
 - **Architecture:** `src/api/` (routes → services → repositories), `src/web/` (pages → components), `src/shared/` (types, validation)
@@ -71,7 +101,7 @@ Every task produces a structured contract (`state/contract.md`) that eliminates 
 
 - Builder never re-explores (contract specifies files + line ranges + pattern reference)
 - Reviewer never re-interprets (contract IS the requirements)
-- Knowledge modules loaded deterministically (contract specifies which ones)
+- Knowledge modules loaded deterministically (contract + Context Compiler resolve what's needed)
 
 ## Customizing for Your Project
 
@@ -79,28 +109,55 @@ Every task produces a structured contract (`state/contract.md`) that eliminates 
 2. **Project conventions**: Edit `AGENTS.md` → add project-specific rules at the bottom
 3. **Tech stack**: Edit `docs/platform-specification.md` if you use a different stack
 4. **Permissions**: Edit `opencode.jsonc` → `permission` section for stricter/looser controls
-5. **MCP servers**: Add under `mcp` in `opencode.jsonc`, opt-in per agent under `tools`
+5. **MCP servers**: Edit `opencode.jsonc` → `mcp` section. Add or remove servers. All disabled globally, opt-in per agent under `agent.*.tools`
+6. **Knowledge atoms**: Add to `.opencode/knowledge/atoms/` and rebuild the registry
 
 ## Directory Structure
 
 ```
 project-root/
-├── AGENTS.md                    ← Framework instructions + project rules
-├── opencode.jsonc               ← Agents, permissions, MCP, model config
-├── tui.jsonc                    ← Terminal UI preferences
+├── AGENTS.md                        ← Framework instructions + project rules
+├── opencode.jsonc                   ← Agents, permissions, MCP (14 servers), model config
+├── tui.jsonc                        ← Terminal UI preferences
 ├── .opencode/
-│   ├── agents/                  ← 6 agent definitions (markdown)
-│   ├── commands/                ← 9 workflow commands
-│   ├── skills/                  ← 25 skills (19 knowledge + 6 workflow)
-│   ├── tools/                   ← 3 custom TypeScript tools
-│   └── plugins/                 ← 3 event hook plugins
-├── prompts/                     ← Agent system prompt files
-├── state/                       ← Workflow state (contract.md is source of truth)
-│   ├── contract.md
-│   ├── phase.json
-│   ├── decisions.md
-│   └── cache/
-└── docs/                        ← Platform spec + handbook
+│   ├── agents/                      ← 6 agent definitions (markdown)
+│   ├── commands/                    ← 10 workflow commands
+│   ├── skills/                      ← 27 skills (21 knowledge + 6 workflow)
+│   │   ├── eng-*/                   ← 21 domain knowledge modules
+│   │   └── workflow-*/              ← 6 workflow decision skills
+│   ├── tools/                       ← 4 custom TypeScript tools (incl. context-compiler)
+│   ├── plugins/                     ← 3 event hook plugins
+│   └── knowledge/                   ← Atom-centric knowledge system
+│       ├── atoms/decisions/         ← Architecture decision atoms (DEC-*)
+│       ├── atoms/patterns/          ← Implementation pattern atoms (PAT-*)
+│       ├── atoms/rules/             ← Non-negotiable rule atoms (RUL-*)
+│       ├── atoms/capabilities/      ← Capability definition atoms (CAP-*)
+│       ├── atoms/examples/          ← Reference code examples (EXM-*)
+│       ├── views/                   ← Compiled documents (auto-generated from atoms)
+│       ├── schemas/                 ← Atom and reflection JSON schemas
+│       └── history/                 ← Deprecated atom archive
+├── prompts/                         ← Agent system prompt files
+├── state/                           ← Framework state + evolution data
+│   ├── contract.md                  ← Execution contract (source of truth)
+│   ├── phase.json                   ← Current workflow phase
+│   ├── decisions.md                 ← Architecture decisions log
+│   ├── knowledge-registry.json      ← Machine-readable capability→atom mapping
+│   ├── cache/                       ← Generated caches (repo structure, deps)
+│   ├── reflections/                 ← Reflection engine data
+│   │   ├── registry.json
+│   │   ├── data/                    ← Structured reflections (REFL-*)
+│   │   └── clusters/                ← Synthesis clusters
+│   ├── candidates/                  ← Improvement candidates (CAND-*)
+│   ├── experiments/                 ← Experiment designs and results
+│   ├── evolution/                   ← Compiler parameters, promotion log, metrics
+│   └── synthesis/                   ← Synthesis schedule and state
+└── docs/                            ← Architecture and specification
+    ├── platform-specification.md    ← Platform standards
+    ├── engineering-handbook.md      ← Principles + knowledge index
+    ├── context-compiler-architecture.md   ← Compiler design (9-pass pipeline)
+    ├── knowledge-graph-architecture.md    ← Atom-centric knowledge design
+    ├── reflection-engine-architecture.md  ← Continuous learning design
+    └── architecture-decisions.md    ← Framework ADRs
 ```
 
 ## Design Principles
@@ -109,9 +166,11 @@ project-root/
 2. **Convention over configuration** — Sensible defaults. Exceptions are explicit.
 3. **Filesystem state** — State lives in `state/` directory. No database. No services.
 4. **Model-cost awareness** — Premium for orchestrator/builder, cheap for analyst/reviewer.
-5. **Least privilege** — Agents get only the permissions they need.
+5. **Least privilege** — Agents get only the permissions and MCP tools they need.
 6. **The contract is the standard** — Created once, consumed by all downstream agents.
-7. **Knowledge is centralized** — Engineering standards in `eng-*` skills, not scattered in prompts.
+7. **Knowledge is atomic** — Engineering standards as composable graph nodes, not monolithic documents.
+8. **Context is compiled** — Deterministic, cache-optimized context assembly for every model invocation.
+9. **The framework learns** — Every execution produces structured reflections that accumulate into evidence-backed improvements.
 
 ## License
 

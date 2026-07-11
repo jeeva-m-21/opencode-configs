@@ -14,6 +14,10 @@
   //     "anthropic": { "options": { "timeout": 600000, "chunkTimeout": 30000, "setCacheKey": true } }
   //   },
 
+  // Context loading: the Context Compiler (context-compiler tool + state/knowledge-registry.json)
+  // deterministically resolves only the knowledge needed for each task. These instruction files
+  // form the stable prefix that is always available. As the compiler matures through Phase 1-5,
+  // the platform specification will be moved from always-loaded to compiler-resolved.
   "instructions": [
     "AGENTS.md",
     "docs/engineering-handbook.md",
@@ -21,7 +25,8 @@
     "state/decisions.md",
     "state/phase.json",
     "state/analysis.json",
-    "state/cache/repo-structure.json"
+    "state/cache/repo-structure.json",
+    "state/knowledge-registry.json"
   ],
 
   "compaction": {
@@ -115,7 +120,16 @@
     "question": "allow"
   },
 
+  // MCP Architecture — tiered access per the blueprint:
+  //   Tier 0 (always-on, low token cost):  context7
+  //   Tier 1 (per-agent, specialized):     sequential-thinking, fetch, memory
+  //   Tier 2 (on-demand, heavy):           github, git, postgres, sqlite, docker, brave-search
+  //   Tier 3 (restricted, avoid):          filesystem (built-in tools cover this)
+  //
+  // Every MCP server is globally disabled below and opted-in per agent.
+  // This prevents token bloat from unused tool descriptions inflating every message.
   "mcp": {
+    // ── TIER 0: Always available (low token cost, broad utility) ──────────
     "context7": {
       "type": "remote",
       "url": "https://mcp.context7.com/mcp",
@@ -123,11 +137,121 @@
       "headers": {
         "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
       }
+    },
+
+    // ── TIER 1: Specialized reasoning / retrieval ─────────────────────────
+    "sequential-thinking": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "enabled": true
+    },
+    "memory": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
+      "enabled": true
+    },
+    "fetch": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-fetch"],
+      "enabled": true
+    },
+
+    // ── TIER 2: Heavy / infrequent — enable per-agent only ────────────────
+    "github": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-github"],
+      "enabled": true,
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_TOKEN}"
+      }
+    },
+    "git": {
+      "type": "local",
+      "command": ["npx", "-y", "@anthropic/mcp-server-git"],
+      "enabled": true
+    },
+    "brave-search": {
+      "type": "local",
+      "command": ["npx", "-y", "@anthropic/mcp-server-brave-search"],
+      "enabled": true,
+      "env": {
+        "BRAVE_API_KEY": "{env:BRAVE_API_KEY}"
+      }
+    },
+    "postgres": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-postgres"],
+      "enabled": true,
+      "env": {
+        "DATABASE_URL": "{env:DATABASE_URL}"
+      }
+    },
+    "sqlite": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-sqlite"],
+      "enabled": true,
+      "args": ["--db-path", "{env:SQLITE_DB_PATH:-./data/local.db}"]
+    },
+    "docker": {
+      "type": "local",
+      "command": ["npx", "-y", "@anthropic/mcp-server-docker"],
+      "enabled": true
+    },
+    "redis": {
+      "type": "local",
+      "command": ["npx", "-y", "@anthropic/mcp-server-redis"],
+      "enabled": true,
+      "env": {
+        "REDIS_URL": "{env:REDIS_URL:-redis://localhost:6379}"
+      }
+    },
+    "sentry": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-sentry"],
+      "enabled": true,
+      "env": {
+        "SENTRY_AUTH_TOKEN": "{env:SENTRY_AUTH_TOKEN}",
+        "SENTRY_ORG": "{env:SENTRY_ORG}",
+        "SENTRY_PROJECT": "{env:SENTRY_PROJECT}"
+      }
+    },
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "-y", "@anthropic/mcp-server-playwright"],
+      "enabled": true
+    },
+    "puppeteer": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-puppeteer"],
+      "enabled": true
+    },
+
+    // ── TIER 3: Restricted — use built-in tools instead, enable only when essential ──
+    "filesystem": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem"],
+      "enabled": true,
+      "args": ["{env:WORKSPACE_ROOT:-.}"]
     }
   },
 
+  // Global disable — forces per-agent opt-in. No MCP tool descriptions leak to agents that don't need them.
   "tools": {
-    "context7_*": false
+    "context7_*": false,
+    "sequential-thinking_*": false,
+    "memory_*": false,
+    "fetch_*": false,
+    "github_*": false,
+    "git_*": false,
+    "brave-search_*": false,
+    "postgres_*": false,
+    "sqlite_*": false,
+    "docker_*": false,
+    "redis_*": false,
+    "sentry_*": false,
+    "playwright_*": false,
+    "puppeteer_*": false,
+    "filesystem_*": false
   },
 
   "agent": {
@@ -161,6 +285,9 @@
       },
       "tools": {
         "context7_*": true,
+        "sequential-thinking_*": true,
+        "fetch_*": true,
+        "memory_*": true,
         "skill": true
       }
     },
@@ -188,6 +315,7 @@
       },
       "tools": {
         "context7_*": true,
+        "fetch_*": true,
         "skill": false,
         "todowrite": false
       }
@@ -223,6 +351,14 @@
       },
       "tools": {
         "context7_*": false,
+        "sequential-thinking_*": true,
+        "git_*": true,
+        "github_*": true,
+        "postgres_*": true,
+        "sqlite_*": true,
+        "redis_*": true,
+        "docker_*": true,
+        "brave-search_*": true,
         "skill": true,
         "todowrite": true
       }
@@ -255,6 +391,7 @@
       },
       "tools": {
         "context7_*": false,
+        "git_*": true,
         "skill": true,
         "todowrite": false
       }
@@ -281,6 +418,7 @@
       },
       "tools": {
         "context7_*": true,
+        "fetch_*": true,
         "skill": true,
         "todowrite": false
       }
@@ -310,6 +448,10 @@
       },
       "tools": {
         "context7_*": true,
+        "sequential-thinking_*": true,
+        "fetch_*": true,
+        "github_*": true,
+        "brave-search_*": true,
         "skill": true,
         "todowrite": false
       }

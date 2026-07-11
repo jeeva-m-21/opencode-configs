@@ -4,6 +4,16 @@ This is the authoritative source for how software is designed, built, reviewed, 
 
 The complete platform specification is at `docs/platform-specification.md`. This handbook provides the principles and knowledge index; the specification provides the implementation details.
 
+### Infrastructure Components
+
+| Component | Document | Description |
+|---|---|---|
+| **Context Compiler** | `docs/context-compiler-architecture.md` | Deterministic context optimization — resolves minimal knowledge for each task, maximizes prompt caching |
+| **Knowledge Graph** | `docs/knowledge-graph-architecture.md` | Atom-centric knowledge system — decisions, patterns, rules, capabilities as composable graph nodes |
+| **Reflection Engine** | `docs/reflection-engine-architecture.md` | Continuous learning system — observes every execution, accumulates evidence, proposes improvements |
+
+These three components form the core infrastructure. The Context Compiler determines what knowledge reaches models. The Knowledge Graph stores it as atoms. The Reflection Engine learns from every execution and proposes evidence-backed improvements.
+
 ## Our Platform
 
 **Stack:** TypeScript (strict) / Bun / React 18+ / Next.js or Vite / Hono or Express / PostgreSQL 16+ / Drizzle ORM / Redis / Zod / JWT Auth / Vitest / Docker / GitHub Actions
@@ -39,18 +49,38 @@ Every engineering task is defined by an execution contract (`state/contract.md`)
 
 The Orchestrator produces the contract during `/plan-feature`. The Builder consumes it. The Reviewer validates against it. No other context is needed.
 
+## Context Compiler
+
+The Context Compiler is the framework's context optimization engine. It sits between the Orchestrator and every model invocation, deterministically constructing the smallest, highest-quality, most cache-friendly execution context possible.
+
+**Architecture:** `docs/context-compiler-architecture.md` — the complete design specification.
+
+**How it works:**
+1. The Orchestrator calls the `context-compiler` tool before dispatching any subagent
+2. The compiler resolves the minimum required knowledge for the specific task
+3. It removes duplicate information, compresses verbose content, and preserves a stable prompt prefix
+4. The compiled context is all the subagent needs — no additional exploration or knowledge loading
+
+**Key properties:**
+- **Deterministic** — same inputs always produce the same output (no LLM calls)
+- **Cache-aware** — stable prefix design maximizes provider prompt caching (up to 90% savings)
+- **Capability-driven** — knowledge is selected by required engineering capabilities, not topics
+- **Budget-aware** — respects per-agent token budgets, trims context when over budget
+
+**Compilation pipeline:** Parse → Capability Resolve → Dependency Resolve → Atom Expand → Deduplicate → Compress → Assemble → Validate → Output
+
 ## Knowledge System
 
-Detailed engineering standards for each domain live in knowledge modules. Agents load only the modules relevant to their current task — as specified in the execution contract.
+Detailed engineering standards for each domain live in knowledge modules. Agents load only the modules relevant to their current task — either explicitly specified in the execution contract or resolved deterministically by the Context Compiler.
 
-### How to Load Knowledge
+### How Knowledge Is Selected
 
-When an agent needs domain-specific guidance:
+The Context Compiler resolves knowledge automatically. When you need to manually load:
 1. Check if the execution contract specifies which modules to load
 2. If the contract is silent, check if the knowledge is in the handbook
 3. If not, call `skill({ name: "eng-<domain>" })` to load the relevant module
 4. Apply the knowledge to your work
-5. Do NOT load knowledge modules preemptively — load only what the contract or task needs
+5. Do NOT load knowledge modules preemptively — let the compiler decide
 
 ### Knowledge Module Index
 
@@ -75,6 +105,8 @@ When an agent needs domain-specific guidance:
 | `eng-ai-prompt` | Writing prompts for AI agents | Prompt structure, delegation patterns, context budgets |
 | `eng-ai-context` | Managing context windows | Caching, compaction, token efficiency |
 | `eng-ai-mcp` | Integrating MCP servers | MCP selection, token impact, permission model |
+| `eng-context-compiler` | Context compilation internals | Compiler architecture, capability taxonomy, atom model, pipeline design |
+| `eng-reflection` | Reflection and evolution | Reflection engine, synthesis engine, improvement candidates, evolution pipeline |
 
 ### Loading Strategy by Agent
 

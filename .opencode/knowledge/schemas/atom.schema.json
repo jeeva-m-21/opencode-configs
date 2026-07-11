@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opencode.ai/knowledge/atom.schema.json",
+  "title": "Engineering Knowledge Atom",
+  "description": "Schema for the smallest reusable, composable, independently versioned unit of engineering knowledge.",
+  "type": "object",
+  "required": [
+    "id", "type", "title", "description",
+    "capabilities", "status", "version", "created",
+    "priority", "token_estimate", "audience"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^(DEC|PAT|RUL|EXM|CAP|TST)-[a-z0-9-]+$",
+      "description": "Globally unique atom identifier. Format: {TYPE}-{slug}"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["decision", "pattern", "rule", "example", "capability", "test"],
+      "description": "Atom type: decision (ADR), pattern (how-to), rule (non-negotiable), example (reference code), capability (ability definition)"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 120,
+      "description": "Short human-readable title"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "1-3 sentence summary used in search results and compiler summaries"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 0,
+      "description": "Engineering capabilities this atom provides knowledge about"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Freeform tags for supplementary search and discovery"
+    },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "architecture", "backend", "frontend", "database",
+        "security", "testing", "deployment", "observability",
+        "performance", "ai-engineering", "documentation", "general"
+      ],
+      "description": "Primary engineering domain"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "proposed", "accepted", "active", "superseded", "deprecated", "rejected"],
+      "description": "Lifecycle status"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "description": "Semantic version (MAJOR.MINOR.PATCH)"
+    },
+    "created": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 date when atom was first created"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 date of last modification"
+    },
+    "author": {
+      "type": "string",
+      "description": "Person or system that created this atom"
+    },
+    "reviewers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "People who reviewed this atom"
+    },
+    "dependencies": {
+      "type": "object",
+      "properties": {
+        "requires": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Atom IDs this atom hard-depends on"
+        },
+        "optional": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Atom IDs that enhance but aren't required"
+        }
+      }
+    },
+    "supersedes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Atom IDs this atom replaces"
+    },
+    "superseded_by": {
+      "type": ["string", "null"],
+      "description": "Atom ID that replaces this atom (when status=superseded)"
+    },
+    "conflicts_with": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Atom IDs incompatible with this atom"
+    },
+    "related_to": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Atom IDs with a non-binding association"
+    },
+    "implements": {
+      "type": "object",
+      "properties": {
+        "decisions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Decision atom IDs this pattern implements"
+        }
+      }
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "description": "Confidence level in this decision/pattern (decision-type only)"
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "URLs, documents, or benchmarks supporting this atom"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["required", "recommended", "contextual"],
+      "description": "Compiler inclusion priority"
+    },
+    "token_estimate": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5000,
+      "description": "Pre-computed token count estimate for budget planning"
+    },
+    "audience": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["builder", "reviewer", "analyst", "docs-writer", "security-auditor", "orchestrator"]
+      },
+      "minItems": 1,
+      "description": "Agent types that benefit from this atom"
+    },
+    "platform_version": {
+      "type": "string",
+      "description": "Framework version this atom was authored against"
+    },
+    "deprecated_in_favor_of": {
+      "type": ["string", "null"],
+      "description": "Suggested replacement when deprecated"
+    },
+    "removal_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "When deprecated content should be removed from queries"
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "decision" } } },
+      "then": {
+        "required": ["confidence", "evidence"],
+        "properties": {
+          "implements": false
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "pattern" } } },
+      "then": {
+        "properties": {
+          "confidence": false,
+          "evidence": { "type": "array" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "rule" } } },
+      "then": {
+        "required": [],
+        "properties": {
+          "priority": { "const": "required" },
+          "confidence": false,
+          "evidence": false,
+          "implements": false,
+          "supersedes": false
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "superseded" } } },
+      "then": { "required": ["superseded_by"] }
+    },
+    {
+      "if": { "properties": { "status": { "const": "deprecated" } } },
+      "then": {
+        "anyOf": [
+          { "required": ["deprecated_in_favor_of"] },
+          { "required": ["removal_date"] }
+        ]
+      }
+    }
+  ]
+}

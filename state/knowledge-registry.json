@@ -1,0 +1,523 @@
+{
+  "$schema": "context-compiler/knowledge-registry-schema.json",
+  "version": "1.0.0",
+  "description": "Machine-readable registry mapping engineering capabilities to knowledge modules and atoms. Used by the Context Compiler for deterministic context assembly.",
+
+  "capabilities": {
+    "ARCHITECTURE_PATTERNS": {
+      "description": "Layered architecture, modular monolith, microservice extraction criteria",
+      "keywords": ["architecture", "layered", "monolith", "microservice", "design pattern"],
+      "requiredBy": ["feature", "refactor", "performance"]
+    },
+    "PROJECT_STRUCTURE": {
+      "description": "Directory layout, file naming conventions, module boundaries",
+      "keywords": ["structure", "directory", "file", "module", "layout"],
+      "requiredBy": ["feature", "refactor"]
+    },
+    "LAYERED_DESIGN": {
+      "description": "Routes → Services → Repositories separation, cross-cutting concerns",
+      "keywords": ["layer", "route", "service", "repository", "middleware"],
+      "requiredBy": ["feature", "refactor"]
+    },
+    "API_DESIGN": {
+      "description": "REST conventions, response envelopes, status codes, pagination, filtering",
+      "keywords": ["api", "endpoint", "route", "rest", "envelope", "pagination", "status code"],
+      "requiredBy": ["feature", "bug", "refactor"]
+    },
+    "API_VALIDATION": {
+      "description": "Zod schema validation at route boundaries, error formatting",
+      "keywords": ["validation", "zod", "schema", "input", "400", "422"],
+      "requiredBy": ["feature", "bug", "refactor"]
+    },
+    "BACKEND_SERVICE": {
+      "description": "Service layer patterns, business logic, framework-agnostic design",
+      "keywords": ["service", "business logic", "domain", "use case"],
+      "requiredBy": ["feature", "refactor", "performance"]
+    },
+    "BACKEND_MIDDLEWARE": {
+      "description": "Auth, logging, validation, rate limiting, error handling middleware",
+      "keywords": ["middleware", "auth middleware", "logging", "rate limit"],
+      "requiredBy": ["feature", "security"]
+    },
+    "BACKEND_REPOSITORY": {
+      "description": "Repository/DAO patterns, query encapsulation, data access",
+      "keywords": ["repository", "dao", "data access", "query", "database"],
+      "requiredBy": ["feature", "refactor", "performance"]
+    },
+    "FRONTEND_COMPONENT": {
+      "description": "Component design, composition, separation of UI and logic",
+      "keywords": ["component", "ui", "react", "jsx", "props", "render"],
+      "requiredBy": ["feature", "bug", "refactor"]
+    },
+    "FRONTEND_STATE": {
+      "description": "State management, hooks, stores, context, React Query",
+      "keywords": ["state", "hook", "context", "store", "usestate", "useeffect"],
+      "requiredBy": ["feature", "bug", "refactor"]
+    },
+    "FRONTEND_ROUTING": {
+      "description": "Page routing, layouts, navigation patterns",
+      "keywords": ["route", "page", "navigation", "layout", "router"],
+      "requiredBy": ["feature"]
+    },
+    "DATABASE_SCHEMA": {
+      "description": "Table design, column types, constraints, UUID PKs, timestamps",
+      "keywords": ["table", "column", "schema", "migration", "postgresql", "uuid"],
+      "requiredBy": ["feature", "refactor", "maintenance"]
+    },
+    "DATABASE_QUERIES": {
+      "description": "Query patterns, parameterization, specific columns, pagination",
+      "keywords": ["query", "sql", "select", "join", "parameterized"],
+      "requiredBy": ["feature", "bug", "performance"]
+    },
+    "DATABASE_MIGRATIONS": {
+      "description": "Drizzle Kit migrations, forward-only, staging testing",
+      "keywords": ["migration", "drizzle", "schema change", "alter table"],
+      "requiredBy": ["feature", "maintenance"]
+    },
+    "AUTHENTICATION": {
+      "description": "JWT access/refresh tokens, password hashing, token lifecycle",
+      "keywords": ["auth", "jwt", "token", "login", "password", "bcrypt"],
+      "requiredBy": ["feature", "security", "bug"]
+    },
+    "AUTHORIZATION": {
+      "description": "RBAC, middleware enforcement, resource ownership",
+      "keywords": ["rbac", "role", "admin", "permission", "access control"],
+      "requiredBy": ["feature", "security"]
+    },
+    "SECRET_MANAGEMENT": {
+      "description": "Environment variables, secrets rotation, GitHub Secrets",
+      "keywords": ["secret", "env", "environment", "credential", ".env"],
+      "requiredBy": ["feature", "security", "deployment"]
+    },
+    "SECURITY_HEADERS": {
+      "description": "CSP, CORS, HSTS, X-Frame-Options",
+      "keywords": ["csp", "cors", "hsts", "header", "security"],
+      "requiredBy": ["feature", "security"]
+    },
+    "SECURITY_AUDIT": {
+      "description": "Dependency scanning, vulnerability review, OWASP checks",
+      "keywords": ["audit", "vulnerability", "owasp", "cve", "scan"],
+      "requiredBy": ["security"]
+    },
+    "INPUT_VALIDATION": {
+      "description": "Defense layers — Zod → business rules → TypeScript types → DB constraints",
+      "keywords": ["validation", "sanitize", "input", "xss", "injection"],
+      "requiredBy": ["feature", "security", "bug"]
+    },
+    "TESTING_UNIT": {
+      "description": "Vitest patterns, coverage requirements, test organization",
+      "keywords": ["test", "unit", "vitest", "coverage", "mock"],
+      "requiredBy": ["feature", "bug", "refactor"]
+    },
+    "TESTING_INTEGRATION": {
+      "description": "API testing with Supertest, all response codes, auth paths",
+      "keywords": ["integration", "api test", "supertest", "endpoint test"],
+      "requiredBy": ["feature"]
+    },
+    "TESTING_COMPONENT": {
+      "description": "Testing Library, render states, user interactions",
+      "keywords": ["component test", "render", "testing library", "interaction"],
+      "requiredBy": ["feature", "bug"]
+    },
+    "TESTING_E2E": {
+      "description": "Playwright, critical user flows",
+      "keywords": ["e2e", "playwright", "browser test", "flow"],
+      "requiredBy": ["feature"]
+    },
+    "CODE_REVIEW_CHECKLIST": {
+      "description": "Review standards, severity levels, feedback patterns",
+      "keywords": ["review", "check", "standard", "feedback"],
+      "requiredBy": ["review"]
+    },
+    "ERROR_HANDLING": {
+      "description": "Error taxonomy, recovery strategies, correlation IDs, structured errors",
+      "keywords": ["error", "exception", "catch", "correlation", "recovery"],
+      "requiredBy": ["feature", "bug", "refactor"]
+    },
+    "OBSERVABILITY": {
+      "description": "Structured logging, RED metrics, health checks, alerting",
+      "keywords": ["log", "metric", "health", "monitor", "alert"],
+      "requiredBy": ["feature", "performance"]
+    },
+    "PERFORMANCE_OPTIMIZATION": {
+      "description": "Profiling, measurement, caching strategy, optimization patterns",
+      "keywords": ["performance", "optimize", "profile", "cache", "slow"],
+      "requiredBy": ["performance"]
+    },
+    "PRODUCTION_READINESS": {
+      "description": "Deployment checklist, SRE principles, backup verification",
+      "keywords": ["production", "deploy", "checklist", "sre", "backup"],
+      "requiredBy": ["feature", "release"]
+    },
+    "DEPLOYMENT": {
+      "description": "Docker, environment strategy, Docker Compose, cloud deployment",
+      "keywords": ["deploy", "docker", "container", "dockerfile", "kubernetes"],
+      "requiredBy": ["feature", "release"]
+    },
+    "CI_CD": {
+      "description": "GitHub Actions pipelines, staging, production promotion",
+      "keywords": ["ci", "cd", "pipeline", "github actions", "workflow"],
+      "requiredBy": ["feature", "maintenance"]
+    },
+    "BRANCH_STRATEGY": {
+      "description": "Git workflow, conventional commits, PR requirements",
+      "keywords": ["branch", "git", "commit", "pr", "merge"],
+      "requiredBy": ["feature", "release"]
+    },
+    "AI_CONTEXT_ENGINEERING": {
+      "description": "Context budgets, caching, compaction, token efficiency",
+      "keywords": ["context", "token", "compact", "cache", "budget"],
+      "requiredBy": ["feature", "refactor"]
+    },
+    "AI_PROMPT_ENGINEERING": {
+      "description": "Prompt structure, delegation patterns, briefing design",
+      "keywords": ["prompt", "briefing", "delegation", "instruction"],
+      "requiredBy": []
+    },
+    "AI_MCP_INTEGRATION": {
+      "description": "MCP selection, token impact assessment, per-agent gating",
+      "keywords": ["mcp", "server", "tool integration", "context7"],
+      "requiredBy": []
+    },
+    "DOCUMENTATION_STANDARDS": {
+      "description": "JSDoc, README, API docs, decision logging",
+      "keywords": ["docs", "documentation", "jsdoc", "readme"],
+      "requiredBy": ["docs"]
+    },
+    "DECISION_LOGGING": {
+      "description": "ADR format, decision recording in state/decisions.md",
+      "keywords": ["adr", "decision", "architecture decision"],
+      "requiredBy": ["feature", "refactor"]
+    },
+    "REFACTORING_PATTERNS": {
+      "description": "Safe refactoring patterns, when to refactor, risk assessment",
+      "keywords": ["refactor", "restructure", "extract", "rename"],
+      "requiredBy": ["refactor"]
+    }
+  },
+
+  "modules": {
+    "eng-platform": {
+      "path": ".opencode/skills/eng-platform/SKILL.md",
+      "provides": [
+        "PROJECT_STRUCTURE",
+        "API_DESIGN",
+        "API_VALIDATION",
+        "BACKEND_SERVICE",
+        "BACKEND_REPOSITORY",
+        "FRONTEND_COMPONENT",
+        "DATABASE_SCHEMA",
+        "DATABASE_QUERIES",
+        "AUTHENTICATION",
+        "AUTHORIZATION",
+        "SECRET_MANAGEMENT",
+        "SECURITY_HEADERS",
+        "INPUT_VALIDATION",
+        "TESTING_UNIT",
+        "TESTING_INTEGRATION",
+        "TESTING_COMPONENT",
+        "DEPLOYMENT",
+        "CI_CD",
+        "BRANCH_STRATEGY",
+        "ERROR_HANDLING",
+        "PRODUCTION_READINESS",
+        "OBSERVABILITY",
+        "DOCUMENTATION_STANDARDS",
+        "DECISION_LOGGING"
+      ],
+      "depends_on": [],
+      "priority": "foundational",
+      "audience": ["orchestrator", "builder", "reviewer", "analyst", "docs-writer", "security-auditor"],
+      "estimated_tokens": 850
+    },
+    "eng-architecture": {
+      "path": ".opencode/skills/eng-architecture/SKILL.md",
+      "provides": [
+        "ARCHITECTURE_PATTERNS",
+        "LAYERED_DESIGN",
+        "PROJECT_STRUCTURE"
+      ],
+      "depends_on": ["eng-platform"],
+      "priority": "foundational",
+      "audience": ["orchestrator", "builder"],
+      "estimated_tokens": 600
+    },
+    "eng-api-design": {
+      "path": ".opencode/skills/eng-api-design/SKILL.md",
+      "provides": [
+        "API_DESIGN",
+        "API_VALIDATION"
+      ],
+      "depends_on": ["eng-platform", "eng-security"],
+      "priority": "domain",
+      "audience": ["builder", "reviewer", "orchestrator"],
+      "estimated_tokens": 500
+    },
+    "eng-backend": {
+      "path": ".opencode/skills/eng-backend/SKILL.md",
+      "provides": [
+        "BACKEND_SERVICE",
+        "BACKEND_MIDDLEWARE",
+        "BACKEND_REPOSITORY",
+        "ERROR_HANDLING"
+      ],
+      "depends_on": ["eng-platform", "eng-architecture"],
+      "priority": "domain",
+      "audience": ["builder", "reviewer"],
+      "estimated_tokens": 550
+    },
+    "eng-frontend": {
+      "path": ".opencode/skills/eng-frontend/SKILL.md",
+      "provides": [
+        "FRONTEND_COMPONENT",
+        "FRONTEND_STATE",
+        "FRONTEND_ROUTING"
+      ],
+      "depends_on": ["eng-platform"],
+      "priority": "domain",
+      "audience": ["builder", "reviewer"],
+      "estimated_tokens": 500
+    },
+    "eng-database": {
+      "path": ".opencode/skills/eng-database/SKILL.md",
+      "provides": [
+        "DATABASE_SCHEMA",
+        "DATABASE_QUERIES",
+        "DATABASE_MIGRATIONS"
+      ],
+      "depends_on": ["eng-platform"],
+      "priority": "domain",
+      "audience": ["builder", "reviewer", "orchestrator"],
+      "estimated_tokens": 450
+    },
+    "eng-security": {
+      "path": ".opencode/skills/eng-security/SKILL.md",
+      "provides": [
+        "AUTHENTICATION",
+        "AUTHORIZATION",
+        "SECRET_MANAGEMENT",
+        "SECURITY_HEADERS",
+        "SECURITY_AUDIT",
+        "INPUT_VALIDATION"
+      ],
+      "depends_on": ["eng-platform"],
+      "priority": "domain",
+      "audience": ["builder", "reviewer", "security-auditor", "orchestrator"],
+      "estimated_tokens": 600
+    },
+    "eng-testing": {
+      "path": ".opencode/skills/eng-testing/SKILL.md",
+      "provides": [
+        "TESTING_UNIT",
+        "TESTING_INTEGRATION",
+        "TESTING_COMPONENT",
+        "TESTING_E2E"
+      ],
+      "depends_on": ["eng-platform"],
+      "priority": "domain",
+      "audience": ["builder", "reviewer"],
+      "estimated_tokens": 500
+    },
+    "eng-performance": {
+      "path": ".opencode/skills/eng-performance/SKILL.md",
+      "provides": [
+        "PERFORMANCE_OPTIMIZATION"
+      ],
+      "depends_on": ["eng-platform"],
+      "priority": "domain",
+      "audience": ["builder", "reviewer", "orchestrator"],
+      "estimated_tokens": 400
+    },
+    "eng-observability": {
+      "path": ".opencode/skills/eng-observability/SKILL.md",
+      "provides": [
+        "OBSERVABILITY"
+      ],
+      "depends_on": ["eng-platform"],
+      "priority": "domain",
+      "audience": ["builder", "reviewer"],
+      "estimated_tokens": 350
+    },
+    "eng-deployment": {
+      "path": ".opencode/skills/eng-deployment/SKILL.md",
+      "provides": [
+        "DEPLOYMENT",
+        "CI_CD",
+        "BRANCH_STRATEGY"
+      ],
+      "depends_on": ["eng-platform", "eng-production"],
+      "priority": "domain",
+      "audience": ["builder", "orchestrator"],
+      "estimated_tokens": 400
+    },
+    "eng-error-handling": {
+      "path": ".opencode/skills/eng-error-handling/SKILL.md",
+      "provides": [
+        "ERROR_HANDLING"
+      ],
+      "depends_on": ["eng-platform"],
+      "priority": "domain",
+      "audience": ["builder", "reviewer"],
+      "estimated_tokens": 300
+    },
+    "eng-refactoring": {
+      "path": ".opencode/skills/eng-refactoring/SKILL.md",
+      "provides": [
+        "REFACTORING_PATTERNS"
+      ],
+      "depends_on": ["eng-platform", "eng-testing"],
+      "priority": "domain",
+      "audience": ["builder", "reviewer", "orchestrator"],
+      "estimated_tokens": 350
+    },
+    "eng-documentation": {
+      "path": ".opencode/skills/eng-documentation/SKILL.md",
+      "provides": [
+        "DOCUMENTATION_STANDARDS",
+        "DECISION_LOGGING"
+      ],
+      "depends_on": ["eng-platform"],
+      "priority": "domain",
+      "audience": ["docs-writer", "builder"],
+      "estimated_tokens": 300
+    },
+    "eng-code-review": {
+      "path": ".opencode/skills/eng-code-review/SKILL.md",
+      "provides": [
+        "CODE_REVIEW_CHECKLIST"
+      ],
+      "depends_on": ["eng-platform"],
+      "priority": "domain",
+      "audience": ["reviewer"],
+      "estimated_tokens": 350
+    },
+    "eng-production": {
+      "path": ".opencode/skills/eng-production/SKILL.md",
+      "provides": [
+        "PRODUCTION_READINESS"
+      ],
+      "depends_on": ["eng-platform", "eng-security"],
+      "priority": "domain",
+      "audience": ["builder", "orchestrator"],
+      "estimated_tokens": 350
+    },
+    "eng-ai-prompt": {
+      "path": ".opencode/skills/eng-ai-prompt/SKILL.md",
+      "provides": [
+        "AI_PROMPT_ENGINEERING"
+      ],
+      "depends_on": ["eng-platform"],
+      "priority": "domain",
+      "audience": ["orchestrator"],
+      "estimated_tokens": 300
+    },
+    "eng-ai-context": {
+      "path": ".opencode/skills/eng-ai-context/SKILL.md",
+      "provides": [
+        "AI_CONTEXT_ENGINEERING"
+      ],
+      "depends_on": ["eng-platform"],
+      "priority": "domain",
+      "audience": ["orchestrator"],
+      "estimated_tokens": 400
+    },
+    "eng-ai-mcp": {
+      "path": ".opencode/skills/eng-ai-mcp/SKILL.md",
+      "provides": [
+        "AI_MCP_INTEGRATION"
+      ],
+      "depends_on": ["eng-platform"],
+      "priority": "domain",
+      "audience": ["orchestrator"],
+      "estimated_tokens": 300
+    }
+  },
+
+  "agentBaselines": {
+    "orchestrator": {
+      "alwaysInclude": ["PROJECT_STRUCTURE", "ARCHITECTURE_PATTERNS", "AI_CONTEXT_ENGINEERING"],
+      "contextBudget": 2500
+    },
+    "builder": {
+      "alwaysInclude": ["PROJECT_STRUCTURE", "TESTING_UNIT", "ERROR_HANDLING"],
+      "contextBudget": 3000
+    },
+    "reviewer": {
+      "alwaysInclude": ["CODE_REVIEW_CHECKLIST", "PROJECT_STRUCTURE"],
+      "contextBudget": 2000
+    },
+    "analyst": {
+      "alwaysInclude": [],
+      "contextBudget": 1500
+    },
+    "docs-writer": {
+      "alwaysInclude": ["DOCUMENTATION_STANDARDS", "PROJECT_STRUCTURE"],
+      "contextBudget": 2000
+    },
+    "security-auditor": {
+      "alwaysInclude": ["SECURITY_AUDIT", "SECRET_MANAGEMENT", "PROJECT_STRUCTURE"],
+      "contextBudget": 2000
+    }
+  },
+
+  "supersedes": {
+    "eng-api-design:api-validation": ["eng-platform:api-validation"],
+    "eng-backend:error-handling": ["eng-error-handling:general"],
+    "eng-backend:service-pattern": ["eng-platform:service-pattern"],
+    "eng-security:auth-implementation": ["eng-platform:auth-patterns"],
+    "eng-security:input-validation": ["eng-platform:input-validation"],
+    "eng-frontend:component-pattern": ["eng-platform:component-pattern"],
+    "eng-database:schema-convention": ["eng-platform:schema-convention"],
+    "eng-deployment:ci-cd": ["eng-platform:ci-cd"],
+    "eng-production:readiness": ["eng-platform:readiness"]
+  },
+
+  "stablePrefixComponents": {
+    "frameworkHeader": "OpenCode Engineering Framework v1.0. Context compiled for: {agent_type}.",
+    "identityTemplate": "Project: {project_name}. Stack: {stack_summary}. Commands: {build}, {lint}, {test}.",
+    "architecturalRules": [
+      "routes/ never contains business logic",
+      "services/ never imports HTTP types",
+      "repositories/ contain all SQL",
+      "shared/ is pure TypeScript + Zod",
+      "components/ui/ has no business logic",
+      "Every endpoint auth-gated unless explicitly public",
+      "Write tests before or alongside implementation",
+      "Run lint and typecheck after changes",
+      "Never commit secrets or .env files"
+    ]
+  },
+
+  "compilerRules": {
+    "tokenBudgets": {
+      "builder": 3000,
+      "reviewer": 2000,
+      "analyst": 1500,
+      "docs-writer": 2000,
+      "security-auditor": 2000,
+      "orchestrator": 2500
+    },
+    "budgetThresholds": {
+      "lightCompression": 0.7,
+      "mediumCompression": 0.85,
+      "aggressiveCompression": 0.95
+    },
+    "compression": {
+      "elideExamples": true,
+      "collapseHeaders": true,
+      "minAtomTokens": 50
+    },
+    "deduplication": {
+      "similarityThreshold": 0.85,
+      "strategy": "hash-with-supersedes"
+    },
+    "scoring": {
+      "weights": {
+        "capabilityMatch": 0.5,
+        "specificity": 0.2,
+        "recency": 0.1,
+        "frequency": 0.2
+      }
+    }
+  }
+}

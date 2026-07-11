@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opencode.ai/knowledge/reflection.schema.json",
+  "title": "Engineering Reflection",
+  "description": "A structured observation produced by the Reflection Engine after every completed engineering task — not prose, not chat memory, but machine-queryable evidence.",
+  "type": "object",
+  "required": ["id", "type", "reflection_type", "task_id", "category", "subject", "observation", "confidence", "severity", "relationships", "generated_at"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^REFL-\\d{8}-[a-f0-9]{8}$",
+      "description": "Unique reflection identifier: REFL-YYYYMMDD-hash8"
+    },
+    "type": {
+      "const": "reflection"
+    },
+    "reflection_type": {
+      "type": "string",
+      "enum": [
+        "success", "failure", "insight", "inefficiency",
+        "gap", "pattern_confirmed", "pattern_refuted",
+        "knowledge_sufficient", "knowledge_insufficient",
+        "compiler_efficient", "compiler_wasteful",
+        "policy_helpful", "policy_harmful"
+      ]
+    },
+    "task_id": {
+      "type": "string",
+      "description": "Contract ID or task identifier that generated this reflection"
+    },
+    "task_type": {
+      "type": "string",
+      "enum": ["feature", "bug", "refactor", "docs", "security", "performance", "exploration", "maintenance"]
+    },
+    "session_id": {
+      "type": "string",
+      "description": "OpenCode session ID"
+    },
+    "agent_type": {
+      "type": "string",
+      "enum": ["orchestrator", "builder", "reviewer", "analyst", "docs-writer", "security-auditor"]
+    },
+    "model_id": {
+      "type": "string",
+      "description": "Model identifier used for this execution"
+    },
+    "lifecycle": {
+      "type": "string",
+      "enum": ["created", "raw", "validated", "clustered", "signaled", "promoted", "superseded"],
+      "default": "raw"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["knowledge", "compiler", "policy", "process", "testing", "review"]
+    },
+    "subject": {
+      "type": "object",
+      "required": ["type", "id"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["atom_id", "pass_name", "policy_name", "capability", "pattern", "tool", "workflow"]
+        },
+        "id": {
+          "type": "string",
+          "description": "The specific identifier of the subject"
+        }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "required": ["expected", "actual", "delta"],
+      "properties": {
+        "expected": {
+          "type": "string",
+          "description": "What should have happened per knowledge/contract"
+        },
+        "actual": {
+          "type": "string",
+          "description": "What actually happened during execution"
+        },
+        "delta": {
+          "type": "string",
+          "description": "The gap between expected and actual — what can be learned"
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "execution_id": { "type": "string" },
+        "tool_call_count": { "type": "integer", "minimum": 0 },
+        "tokens_used": { "type": "integer", "minimum": 0 },
+        "tokens_budget": { "type": "integer", "minimum": 0 },
+        "files_changed": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "test_results": {
+          "type": "object",
+          "properties": {
+            "passed": { "type": "integer" },
+            "failed": { "type": "integer" }
+          }
+        },
+        "review_iterations": { "type": "integer", "minimum": 0 },
+        "compilation_metadata": {
+          "type": "object",
+          "properties": {
+            "atoms_loaded": { "type": "array", "items": { "type": "string" } },
+            "atoms_used": { "type": "array", "items": { "type": "string" } },
+            "atoms_unused": { "type": "array", "items": { "type": "string" } },
+            "atoms_missing": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["critical", "major", "minor", "info"]
+    },
+    "frequency": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Computed by synthesis engine — how many times this pattern has been observed"
+    },
+    "relationships": {
+      "type": "object",
+      "properties": {
+        "knowledge_atoms": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "compiler_passes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "policies": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "capabilities": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "decisions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "patterns": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "related_reflections": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "superseded_by": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "generated_by": {
+      "type": "string",
+      "default": "reflection-engine:v1.0.0"
+    },
+    "contract_reference": {
+      "type": ["string", "null"]
+    },
+    "error_message": {
+      "type": ["string", "null"]
+    },
+    "environment": {
+      "type": "object",
+      "properties": {
+        "framework_version": { "type": "string" },
+        "compiler_version": { "type": "string" },
+        "knowledge_graph_version": { "type": "string" }
+      }
+    }
+  }
+}
